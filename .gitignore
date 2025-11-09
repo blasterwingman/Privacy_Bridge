@@ -1,0 +1,51 @@
+# Node.js
+node_modules/
+
+# Build output
+.next/
+.vercel/
+out/
+build/
+
+# Environment variables
+.env*
+.env*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE/editor
+.vscode/
+.idea/
+*.swp
+
+# Misc
+*.log
+*.tgz
+*.pem
+
+# Supabase
+supabase/.temp/
+supabase/migrations/*.sql~
+
+# Tailwind JIT cache
+.tailwind-cache/
+
+# Coverage
+coverage/
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Optional: ignore lockfiles in monorepo root if not used
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
