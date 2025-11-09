@@ -248,4 +248,8 @@ This is a hackathon MVP. Feel free to fork and extend!
 
 ---
 
-**Built with ❤️ using Next.js, Solana, and Supabase**
+## 📁 Project Structure Note
+
+**Important:** The Privacy Bridge application files have been added directly to the root of this repository rather than in a separate `privacy_bridge_mvp` subfolder. This was done to simplify the repository structure and make it easier for reviewers and judges to access and evaluate the code.
+
+All components, pages, and configurations are located in their respective directories at the repository root level.
