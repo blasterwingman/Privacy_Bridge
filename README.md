@@ -248,4 +248,346 @@ This is a hackathon MVP. Feel free to fork and extend!
 
 ---
 
+
+# **Privacy_Bridge – Technical Overview**
+
+Privacy_Bridge is a zero-knowledge–enabled private wallet and smart-contract system built on the **Midnight Testnet**.
+It demonstrates an end-to-end pipeline for:
+
+* Compact contract compilation
+* zk-config generation
+* Contract deployment
+* Private balance queries
+* Private transaction construction via **ZSwap**
+* Wallet state synchronization via the **Midnight indexer**
+* Command-line wallet operations (send / receive / history)
+
+The project includes a **backend deployment script (`deploy.ts`)**, a **CLI wallet (`cli.ts`)**, and a **frontend UI** that communicates with the backend’s wallet logic.
+
+---
+
+## **1. System Architecture**
+
+```
+                           ┌─────────────────────────────┐
+                           │ Midnight Testnet             │
+                           │ • Ledger Node                │
+                           │ • Proof Server               │
+                           │ • Public Indexer + WS        │
+                           └──────────────┬──────────────┘
+                                          │
+                                          ▼
+     ┌──────────────────────────────┐     ▼
+     │       Backend (Node)         │─────────────┐
+     │ • deploy.ts                  │             │
+     │ • cli.ts (wallet)            │             │
+     │ • ZSwap + Ledger providers   │             │
+     └──────────────────────────────┘             │
+                    │                             │
+                    ▼                             │
+     ┌──────────────────────────────┐             │
+     │ Smart Contract               │             │
+     │ • Compact contract           │             │
+     │ • Managed zk-config          │             │
+     │ • Private state store        │             │
+     └──────────────────────────────┘             │
+                    │                             │
+                    ▼                             │
+     ┌──────────────────────────────┐             │
+     │ Frontend (React/Next.js)     │◄────────────┘
+     │ • Reads deployment.json      │
+     │ • Displays wallet state      │
+     │ • Sends wallet operations    │
+     └──────────────────────────────┘
+```
+
+---
+
+## **2. Core Components**
+
+### **2.1 Compact Smart Contract**
+
+* Written in `.compact`
+* Compiled with:
+
+  ```
+  compact compile contracts/Privacy_Bridge.compact contracts/managed/Privacy_Bridge
+  ```
+* Outputs:
+
+  * Bytecode
+  * ZK configuration
+  * Contract metadata (index.cjs)
+
+### **2.2 ZK Configuration**
+
+Generated automatically in:
+
+```
+contracts/managed/Privacy_Bridge/
+```
+
+Used for:
+
+* Proof generation
+* State transitions
+* Hooking into ZSwap during wallet operations
+
+### **2.3 Wallet Module**
+
+Wallet is constructed using:
+
+```ts
+WalletBuilder.buildFromSeed(
+  indexerURL,
+  websocketURL,
+  proofServerURL,
+  nodeURL,
+  seed,
+  getZswapNetworkId(),
+  "info"
+);
+```
+
+It manages:
+
+* Key derivation
+* Ledger sync
+* ZSwap private coin management
+* Proof generation
+* Transaction submission
+
+---
+
+## **3. Backend Scripts**
+
+### ✅ **3.1 deploy.ts (Contract Deployment)**
+
+Responsible for:
+
+1. Importing/creating wallet
+2. Syncing wallet state
+3. Loading managed contract
+4. Generating ZK providers
+5. Deploying contract via:
+
+   ```ts
+   deployContract(providers, { ... })
+   ```
+6. Writing `deployment.json`
+
+Output example:
+
+```json
+{
+  "contractAddress": "mn_contract_test1...",
+  "deployedAt": "2025-11-07T22:19:51.302Z"
+}
+```
+
+---
+
+### ✅ **3.2 cli.ts (Private Wallet CLI)**
+
+Implements core wallet operations:
+
+#### **Balance Query**
+
+Uses:
+
+```ts
+wallet.state().pipe(...)
+```
+
+Reads shielded balance (`nativeToken()`).
+
+#### **Send Tokens**
+
+ZSwap pipeline:
+
+```ts
+ZswapTransaction.deserialize(...)
+wallet.balanceTransaction(...)
+wallet.proveTransaction(...)
+Transaction.deserialize(...)
+wallet.submitTransaction(...)
+```
+
+#### **Transaction History**
+
+Uses public data provider:
+
+```ts
+publicDataProvider.queryTransactions(address)
+```
+
+#### **Receive Tokens**
+
+Shield address is displayed to the user.
+Balance auto-updates on next sync.
+
+---
+
+## **4. Providers**
+
+Providers are assembled as required by Midnight DSL:
+
+```ts
+const providers = {
+  privateStateProvider,
+  publicDataProvider,
+  zkConfigProvider,
+  proofProvider,
+  walletProvider,
+  midnightProvider
+};
+```
+
+### **4.1 Private State Provider**
+
+Manages local encrypted storage.
+
+### **4.2 Public Data Provider**
+
+GraphQL + WebSocket streams for:
+
+* Ledger inclusion
+* Block height
+* Contract state
+
+### **4.3 ZK Config Provider**
+
+Loads contract-specific zero-knowledge circuits.
+
+### **4.4 Proof Provider**
+
+Local:
+
+```
+http://127.0.0.1:6300
+```
+
+Generates proofs required for:
+
+* Deploy actions
+* Private method calls
+* ZSwap shielding/unshielding
+
+### **4.5 Wallet Provider**
+
+Encapsulates:
+
+* publicKey, encryptionKey
+* ZSwap balancing algorithm
+* Proof generation
+* Transaction submission
+
+---
+
+## **5. Frontend Integration (Technical)**
+
+Your frontend consumes:
+
+```
+deployment.json
+balance endpoint
+history endpoint
+send endpoint
+```
+
+Common connection method:
+
+```ts
+const deployment = await fetch("/deployment.json").then(r => r.json());
+```
+
+### **Frontend Workflow**
+
+1. User enters their seed
+2. Client passes seed → backend
+3. Backend constructs wallet
+4. Backend returns:
+
+   * balance
+   * transactions
+   * shield address
+5. UI displays:
+
+   * Real-time private balance
+   * Send field (address + amount)
+   * History
+
+No contract calls are required on the frontend.
+
+---
+
+## **6. Security Notes**
+
+* Seeds must never be logged or stored unencrypted
+* ZSwap coins must only be deserialized via SDK
+* WebSocket connections must be kept alive for sync
+* Proof server must be local or trusted
+* Contract state remains encrypted while stored locally
+
+---
+
+## **7. How To Run**
+
+### **Compile Contract**
+
+```
+npm run compile
+```
+
+### **Deploy Contract**
+
+```
+npm run deploy
+```
+
+### **Launch Wallet CLI**
+
+```
+npm run cli
+```
+
+---
+
+## **8. Required Dependencies**
+
+Your `package.json` is already correct.
+
+✅ **No changes required**
+CLI and deploy scripts both rely on:
+
+* `@midnight-ntwrk/wallet`
+* `@midnight-ntwrk/zswap`
+* `@midnight-ntwrk/midnight-js-*`
+* `ws`
+
+---
+
+## **9. Technical Roadmap**
+
+* Add shielded → unshielded bridge
+* Wallet RPC server for frontend
+* Contract-based multi-message storage
+* Integration with multiple Compact modules
+* Batch ZSwap transactions
+* Automatic proof server failover
+
+---
+
+## **10. Summary**
+
+Privacy_Bridge demonstrates a full private transaction pipeline on Midnight Testnet:
+
+✔ Compact contract → zk-config → deployment
+✔ Wallet creation/import
+✔ ZSwap-based private transfers
+✔ Shielded balance tracking
+✔ CLI + frontend integration
+✔ Fully local ZK proof generation
+
+
 **Built with ❤️ using Next.js, Solana, and Supabase**
