@@ -1,0 +1,8 @@
+{
+  "version": 3,
+  "file": "index.cjs",
+  "sourceRoot": "../../../",
+  "sources": ["Privacy_Bridge.compact"],
+  "names": [],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;EAAA;;;;;;;;MAMA,AAAA,YAEC;;;;cAF2B,eAA+B;;;;;;;;;;yCAA/B,eAA+B;;;;;;;;;+CAA/B,eAA+B;;;OAE1D;;;GAAC;EARF;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;IAIA;;;;;;;;;uDAAwC;;;;;;;GAItC;EAFF,AAAA,gBAEC,4BAF2B,eAA+B;UACvD,KAAO,GAAY,eAAa;IAAhC;;;;;;;yGAAA,KAAO;;uDAAA;;GACV;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;IAJD;qCAAA;;;;;;;;;;;wFAAwC;KAAA;;;;;;;;;;;;;;"
+}
