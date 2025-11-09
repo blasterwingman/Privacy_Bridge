@@ -6,8 +6,7 @@
     "compile": "ccompact compile contracts/Privacy_Bridge.compact contracts/managed/Privacy_Bridge",
     "build": "tsc",
     "deploy": "node dist/deploy.js",
-    "postdeploy": "node dist/cli.js",
-    "all": "npm run build && node dist/deploy.js && node dist/cli.js"
+    "cli": "node dist/cli.js"
   },
   "dependencies": {
     "@midnight-ntwrk/compact-runtime": "^0.8.1",
