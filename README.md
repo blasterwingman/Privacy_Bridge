@@ -225,7 +225,20 @@ To make this production-ready:
 9. **Implement fee estimation and gas optimization**
 10. **Add support for more tokens (SPL tokens)**
 
-## 📝 License
+## � Where this system is useful
+
+This privacy-focused cross-chain bridge prototype demonstrates features and patterns that are useful in multiple real-world scenarios. Example use cases include:
+
+- Privacy-preserving payments: enabling users to move value between chains without exposing transaction details to third parties.
+- Cross-chain testing and development: a safe environment for developers to prototype bridge flows and on-chain integrations using Solana devnet and Supabase for telemetry.
+- Confidential transfers for DAOs and communities: private distribution of funds or rewards where participant privacy matters.
+- Layer-2 and rollup coordination: moving assets into privacy-preserving layers or rollups where metadata minimization is required.
+- Regulatory-compliant privacy: integrating privacy controls while keeping an auditable trail (with appropriate governance and controls) for enterprise use.
+- Educational demos and audits: showing how wallets, on-chain transactions, and off-chain tracking can be combined when researching privacy primitives.
+
+Each of these examples shows how privacy-aware bridge designs can be leveraged for both research and production (with additional security, auditing, and cryptographic work).
+
+## �📝 License
 
 MIT License - Built for HackTrent 2025
 
