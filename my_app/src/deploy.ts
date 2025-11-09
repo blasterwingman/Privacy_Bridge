@@ -180,7 +180,7 @@ async function main() {
 
     const deployed = await deployContract(providers, {
       contract: contractInstance,
-      privateStateId: "helloWorldState",
+      privateStateId: "Privacy_BridgeState",
       initialPrivateState: {},
     });
 
@@ -209,9 +209,4 @@ async function main() {
 
 main().catch(console.error);
 import { exec } from "child_process";
-
-exec("node dist/cli.js", (err, stdout, stderr) => {
-  if (err) console.error(err);
-  else console.log(stdout);
-});
 
