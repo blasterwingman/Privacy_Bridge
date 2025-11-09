@@ -180,7 +180,7 @@ async function main() {
 
     const deployed = await deployContract(providers, {
       contract: contractInstance,
-      privateStateId: "helloWorldState",
+      privateStateId: "Privacy_BridgeState",
       initialPrivateState: {},
     });
 

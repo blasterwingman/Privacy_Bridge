@@ -112,7 +112,7 @@ async function main() {
         console.log("Deploying contract (30-60 seconds)...");
         const deployed = await deployContract(providers, {
             contract: contractInstance,
-            privateStateId: "helloWorldState",
+            privateStateId: "Privacy_BridgeState",
             initialPrivateState: {},
         });
         const contractAddress = deployed.deployTxData.public.contractAddress;
